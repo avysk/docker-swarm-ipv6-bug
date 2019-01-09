@@ -1,0 +1,62 @@
+- hosts: all
+  strategy: free
+  tasks:
+    - name: update everything
+      yum:
+        name: '*'
+        state: latest
+    - name: set up IPv6
+      lineinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-eth1
+        line: "{{ item }}"
+        state: present
+      loop:
+        - "IPV6INIT=yes"
+        - "IPV6_AUTOCONF=no"
+        - "IPV6ADDR={{ ipv6 }}"
+    - name: Restart networking
+      service:
+        name: network
+        state: restarted
+    - name: add docker-ce repository
+      yum_repository:
+        name: docker-ce
+        description: Docker CE repository
+        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        gpgcheck: yes
+        enabled: yes
+    - name: install docker-ce
+      yum:
+        name: docker-ce
+        state: latest
+    - name: enable and start docker
+      service:
+        name: docker
+        enabled: yes
+        state: started
+
+- hosts: all
+  strategy: linear
+  tasks:
+    - name: Start swarm
+      block:
+      - name: Initialize docker swarm
+        command: docker swarm init --advertise-addr {{ ipv6 }}
+      - name: Get token
+        command: docker swarm join-token worker -q
+        register: swarm_token
+      when: inventory_hostname == "swarmmanager"
+    - name: Join docker swarm
+      command: docker swarm join --token {{ hostvars['swarmmanager']['swarm_token']['stdout'] }} [{{ hostvars['swarmmanager']['ipv6'] }}]:2377 --advertise-addr {{ ipv6 }}
+      when: inventory_hostname == "swarmworker"
+
+    - name: Start nginx service
+      command: docker service create --name nginx --publish published=8080,target=80 nginx
+      when: inventory_hostname == "swarmmanager"
+
+    - name: Report the bug
+      debug:
+        msg: "Try to run 'curl http://{{ ipv4 }}:8080'"
+
+# vim: sw=2:sts=2:expandtab
