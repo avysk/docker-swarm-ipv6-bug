@@ -13,11 +13,12 @@ A computer with [vagrant](https://www.vagrantup.com/), [vagrant provider for lib
 ## Problem reproduction
 
 1. Clone this repository and run `vagrant up --provider=libvirt`.
-        * Vagrant will start two boxes: "swarmmanager" and "swarmworker"
-        * IPv6 connectivity will be set up between those
-        * Docker swarm will be created with one manager (at "swarmmanager") and one worker ("swarmworker"), using IPv6 for master-worker communication
-        * One copy of Nginx container will be deployed as a service
-        * Two curl command lines will be output by ansible: one to access Nginx service through manager node, and one to access Nginx service through worker node.
+  * Vagrant will start two boxes: "swarmmanager" and "swarmworker"
+  * IPv6 connectivity will be set up between those
+  * Docker swarm will be created with one manager (at "swarmmanager") and one worker ("swarmworker"), using IPv6 for master-worker communication
+  * One copy of Nginx container will be deployed as a service
+  * Two curl command lines will be output by ansible: one to access Nginx service through manager node, and one to access Nginx service through worker node.
+
 2. Run suggested curl commands and make sure that only one succeeds.
 
 ## Playing with setup
