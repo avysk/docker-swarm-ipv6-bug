@@ -4,7 +4,7 @@ I have reproduced this problem with docker-ce 18.09.
 
 ## Description
 
-When nodes in docker swarm communicate over IPv6, it is still possible to deploy IPv4 services. However, the service is visible only on the nodes where the corresponding docker container. In other words, routing mesh does not work.
+When nodes in docker swarm communicate over IPv6, it is still possible to deploy IPv4 services. However, the service is visible only on the nodes where the corresponding docker container runs. In other words, routing mesh does not work.
 
 ## Prerequisites
 
