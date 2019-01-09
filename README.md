@@ -1,5 +1,6 @@
 # Demonstration of broken routing mesh for docker swarm over IPv6
 
+The purpose of this repository is to give "steps to reproduce" for the corresponding [bug report](https://github.com/docker/for-linux/issues/551).
 I have reproduced this problem with docker-ce 18.09.
 
 ## Description
